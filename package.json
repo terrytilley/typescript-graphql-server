@@ -17,7 +17,8 @@
     "merge-graphql-schemas": "^1.5.7",
     "pg": "^7.5.0",
     "reflect-metadata": "^0.1.10",
-    "typeorm": "0.2.8"
+    "typeorm": "0.2.8",
+    "yup": "^0.26.6"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -25,6 +26,7 @@
     "@types/express-session": "^1.15.11",
     "@types/graphql": "^14.0.3",
     "@types/node": "^10.12.0",
+    "@types/yup": "^0.26.0",
     "nodemon": "^1.18.4",
     "ts-node": "7.0.1",
     "tslint": "^5.11.0",
