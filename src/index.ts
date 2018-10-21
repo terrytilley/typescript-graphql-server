@@ -1,21 +1,48 @@
+import "dotenv/config";
 import "reflect-metadata";
+
+import * as express from "express";
+import * as session from "express-session";
 import { createConnection } from "typeorm";
-import { User } from "./entity/User";
+import { ApolloServer } from "apollo-server-express";
 
-createConnection()
-  .then(async connection => {
-    console.log("Inserting a new user into the database...");
-    const user = new User();
-    user.firstName = "Timber";
-    user.lastName = "Saw";
-    user.age = 25;
-    await connection.manager.save(user);
-    console.log("Saved a new user with id: " + user.id);
+import typeDefs from "./graphql/typeDefs";
+import resolvers from "./graphql/resolvers";
 
-    console.log("Loading users from the database...");
-    const users = await connection.manager.find(User);
-    console.log("Loaded users: ", users);
+const initServer = async () => {
+  await createConnection();
 
-    console.log("Here you can setup and run express/koa/any other framework.");
-  })
-  .catch(error => console.log(error));
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req, res }: any) => ({ req, res })
+  });
+
+  const port = process.env.PORT as any;
+  const host = process.env.DB_HOST as any;
+  const app = express();
+
+  app.use(
+    session({
+      secret: process.env.SECRET as string,
+      resave: false,
+      saveUninitialized: false
+    })
+  );
+
+  server.applyMiddleware({
+    app,
+    cors: {
+      credentials: true,
+      origin: process.env.FRONTEND_HOST as string
+    }
+  });
+
+  app.listen({ port }, () =>
+    console.log(
+      `🚀 Server ready at http://${host}:${port}${server.graphqlPath}`
+    )
+  );
+};
+
+initServer();
