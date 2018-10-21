@@ -42,6 +42,19 @@ const resolvers: IResolvers = {
       } catch (err) {
         return err;
       }
+    },
+    async logout(_, __, { req }) {
+      const { userId } = req.session;
+
+      if (userId) {
+        req.session.destroy((err: any) => {
+          if (err) console.error(err);
+        });
+
+        return true;
+      }
+
+      return false;
     }
   }
 };
